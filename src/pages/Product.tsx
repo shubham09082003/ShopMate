@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { API_URL } from '../api';
+import { handleAddToCart } from '../HandleFunction/handleAddToCart';
 
 interface Product {
   images: string[];
@@ -12,8 +13,10 @@ interface Product {
 }
 
 function Product() {
+  const [quantity, setQuantity] = useState(1);
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+  const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +49,16 @@ function Product() {
             <span className="text-2xl font-bold text-green-600">Rs. {product.price}</span>
             <span className="bg-green-100 text-green-600 text-sm font-medium px-3 py-1 rounded-full">In Stock</span>
           </div>
-          <button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300">
+          <div className='grid grid-cols-3 p-2 rounded-lg w-[20%] border-gray-200 border text-center'>
+            <button className="" onClick={() => setQuantity(prev => Math.max( prev - 1,1))}>-</button>
+            <div>
+              {quantity}
+            </div>
+            <button className='' onClick={() => setQuantity(prev => Math.min( prev + 1,10))}>+</button>
+          </div>
+          <button 
+            onClick={() => id && handleAddToCart({ id, quantity, token })}
+           className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium shadow-md hover:from-blue-600 hover:to-blue-800 transition duration-300">
             Add to Cart 🛒
           </button>
         </div>
